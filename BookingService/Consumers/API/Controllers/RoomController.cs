@@ -1,7 +1,10 @@
 ﻿using Application;
+using Application.Room.Commands;
 using Application.Room.Dtos;
 using Application.Room.Ports;
+using Application.Room.Queries;
 using Application.Room.Request;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -12,19 +15,21 @@ namespace API.Controllers
     {
         private readonly ILogger<RoomController> _logger;
         private readonly IRoomRepository _roomManager;
+        private readonly IMediator _mediator;
 
-        public RoomController(ILogger<RoomController> logger, IRoomRepository ports)
+        public RoomController(ILogger<RoomController> logger, IRoomRepository ports, IMediator mediator)
         {
             _logger = logger;
             _roomManager = ports;
+            _mediator = mediator;
         }
 
         [HttpPost]
         public async Task<ActionResult<RoomDto>> Post(RoomDto room)
         {
-            var request = new CreateRoomRequest { Data = room };
+            var request = new CreateRoomCommand { RoomDto = room };
 
-            var res = await _roomManager.CreateRoom(request);
+            var res = await _mediator.Send(request);
 
             if (res.Success) return Created("", res.Data);
 
@@ -37,14 +42,19 @@ namespace API.Controllers
             return BadRequest(500);
         }
 
-        /* [HttpGet]
-        public async Task<ActionResult<GuestDTO>> Get(int guestId)
+        [HttpGet]
+        public async Task<ActionResult<RoomDto>> Get(int roomId)
         {
-            var res = await _ports.GetGuest(guestId);
+            var query = new GetRoomQuery
+            {
+                Id = roomId,
+            };
 
-            if (res.Sucess) return Created("", res.Data);
+            var res = await _mediator.Send(query);
+
+            if (res.Success) return Created("", res.Data);
 
             return NotFound(res);
-        }*/
+        }
     }
 }
