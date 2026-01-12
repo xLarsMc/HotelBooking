@@ -11,9 +11,9 @@ namespace API.Controllers
     public class GuestController : ControllerBase
     {
         private readonly ILogger<GuestController> _logger;
-        private readonly IGuestManager _ports;
+        private readonly IGuestRepository _ports;
 
-        public GuestController(ILogger<GuestController> logger, IGuestManager ports)
+        public GuestController(ILogger<GuestController> logger, IGuestRepository ports)
         {
             _logger = logger;
             _ports = ports;
@@ -26,7 +26,7 @@ namespace API.Controllers
 
             var res = await _ports.CreateGuest(request);
 
-            if(res.Sucess) return Created("", res.Data);
+            if(res.Success) return Created("", res.Data);
 
             if (res.ErrorCode == ErrorCodes.NOT_FOUND) return NotFound(res);
 
@@ -45,7 +45,7 @@ namespace API.Controllers
         {
             var res = await _ports.GetGuest(guestId);
 
-            if (res.Sucess) return Created("", res.Data);
+            if (res.Success) return Created("", res.Data);
 
             return NotFound(res);
         }

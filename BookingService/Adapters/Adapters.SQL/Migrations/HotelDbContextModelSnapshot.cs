@@ -22,7 +22,7 @@ namespace Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Entites.Booking", b =>
+            modelBuilder.Entity("Domain.Booking.Entities.Booking", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -45,6 +45,9 @@ namespace Data.Migrations
                     b.Property<DateTime>("Start")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GuestId");
@@ -54,7 +57,7 @@ namespace Data.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("Domain.Entites.Guest", b =>
+            modelBuilder.Entity("Domain.Guest.Entites.Guest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,7 +82,7 @@ namespace Data.Migrations
                     b.ToTable("Guests");
                 });
 
-            modelBuilder.Entity("Domain.Entites.Room", b =>
+            modelBuilder.Entity("Domain.Room.Entities.Room", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -93,24 +96,26 @@ namespace Data.Migrations
                     b.Property<int>("Level")
                         .HasColumnType("int");
 
-                    b.Property<int>("Name")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("Domain.Entites.Booking", b =>
+            modelBuilder.Entity("Domain.Booking.Entities.Booking", b =>
                 {
-                    b.HasOne("Domain.Entites.Guest", "Guest")
+                    b.HasOne("Domain.Guest.Entites.Guest", "Guest")
                         .WithMany()
                         .HasForeignKey("GuestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entites.Room", "Room")
-                        .WithMany()
+                    b.HasOne("Domain.Room.Entities.Room", "Room")
+                        .WithMany("Bookings")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -120,9 +125,9 @@ namespace Data.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("Domain.Entites.Guest", b =>
+            modelBuilder.Entity("Domain.Guest.Entites.Guest", b =>
                 {
-                    b.OwnsOne("Domain.ValueObjects.PersonId", "DocumentId", b1 =>
+                    b.OwnsOne("Domain.Guest.ValueObjects.PersonId", "DocumentId", b1 =>
                         {
                             b1.Property<int>("GuestId")
                                 .HasColumnType("int");
@@ -146,9 +151,9 @@ namespace Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Entites.Room", b =>
+            modelBuilder.Entity("Domain.Room.Entities.Room", b =>
                 {
-                    b.OwnsOne("Domain.ValueObjects.Price", "Price", b1 =>
+                    b.OwnsOne("Domain.Guest.ValueObjects.Price", "Price", b1 =>
                         {
                             b1.Property<int>("RoomId")
                                 .HasColumnType("int");
@@ -157,6 +162,7 @@ namespace Data.Migrations
                                 .HasColumnType("int");
 
                             b1.Property<decimal>("Value")
+                                .HasPrecision(18, 2)
                                 .HasColumnType("decimal(18,2)");
 
                             b1.HasKey("RoomId");
@@ -169,6 +175,11 @@ namespace Data.Migrations
 
                     b.Navigation("Price")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Room.Entities.Room", b =>
+                {
+                    b.Navigation("Bookings");
                 });
 #pragma warning restore 612, 618
         }

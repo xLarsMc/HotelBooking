@@ -1,7 +1,6 @@
-using Domain.Entites;
-using Domain.Enums;
-using NUnit.Framework;
-using Action = Domain.Enums.Action;
+using Domain.Booking.Entities;
+using Domain.Guest.Enums;
+using Action = Domain.Guest.Enums.Action;
 
 namespace DomainTest.Bookings
 {
@@ -19,7 +18,7 @@ namespace DomainTest.Bookings
         public void ShouldAlwaysStartsWithCreatedStatus()
         {
             var booking = new Booking();
-            Assert.AreEqual(booking.CurrentStatus, Status.Created);
+            Assert.AreEqual(booking.Status, Status.Created);
         }
 
         [Test]
@@ -29,7 +28,7 @@ namespace DomainTest.Bookings
 
             booking.ChangeState(Action.Paying);
 
-            Assert.AreEqual(booking.CurrentStatus, Status.Paid);
+            Assert.AreEqual(booking.Status, Status.Paid);
         }
 
         [Test]
@@ -39,7 +38,7 @@ namespace DomainTest.Bookings
 
             booking.ChangeState(Action.Cancelling);
 
-            Assert.AreEqual(booking.CurrentStatus, Status.Canceled);
+            Assert.AreEqual(booking.Status, Status.Canceled);
         }
 
         [Test]
@@ -49,7 +48,7 @@ namespace DomainTest.Bookings
             booking.ChangeState(Action.Paying);
             booking.ChangeState(Action.Finishing);
 
-            Assert.AreEqual(booking.CurrentStatus, Status.Finished);
+            Assert.AreEqual(booking.Status, Status.Finished);
         }
 
         [Test]
@@ -59,7 +58,7 @@ namespace DomainTest.Bookings
             booking.ChangeState(Action.Paying);
             booking.ChangeState(Action.Refounding);
 
-            Assert.AreEqual(booking.CurrentStatus, Status.Refounded);
+            Assert.AreEqual(booking.Status, Status.Refounded);
         }
 
         [Test]
@@ -70,7 +69,7 @@ namespace DomainTest.Bookings
             booking.ChangeState(Action.Cancelling);
             booking.ChangeState(Action.Reopenning);
 
-            Assert.AreEqual(booking.CurrentStatus, Status.Created);
+            Assert.AreEqual(booking.Status, Status.Created);
         }
 
         //Esses são negative paths, ou seja, onde não deve haver a mudança. Como por exemplo, mando um 
@@ -85,7 +84,7 @@ namespace DomainTest.Bookings
             booking.ChangeState(Action.Finishing);
             booking.ChangeState(Action.Refounding);
 
-            Assert.AreEqual(booking.CurrentStatus, Status.Finished);
+            Assert.AreEqual(booking.Status, Status.Finished);
         }
     }
 }

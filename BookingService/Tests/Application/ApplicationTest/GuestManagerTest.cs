@@ -1,8 +1,10 @@
 using Application;
+using Application.Guest;
 using Application.Guest.DTO;
 using Application.Guest.Requests;
-using Domain.Entites;
-using Domain.Ports;
+using Domain.Guest.Entites;
+using Domain.Guest.Enums;
+using Domain.Guest.Ports;
 using Moq;
 
 namespace ApplicationTest
@@ -45,7 +47,7 @@ namespace ApplicationTest
             var response = await guestManager.GetGuest(333);
 
             Assert.IsNotNull(response);
-            Assert.False(response.Sucess);
+            Assert.False(response.Success);
             Assert.AreEqual(response.ErrorCode, ErrorCodes.GUEST_NOT_FOUND);
             Assert.AreEqual(response.Message, "No Guest record has been found with the given id");
         }
@@ -59,9 +61,9 @@ namespace ApplicationTest
             {
                 Id = 333,
                 Name = "Test",
-                DocumentId = new Domain.ValueObjects.PersonId
+                DocumentId = new Domain.Guest.ValueObjects.PersonId
                 {
-                    DocumentType = Domain.Enums.DocumentType.DriveLicense,
+                    DocumentType = DocumentType.DriveLicense,
                     IdNumber = "123"
                 }
             };
@@ -73,7 +75,7 @@ namespace ApplicationTest
             var response = await guestManager.GetGuest(333);
 
             Assert.IsNotNull(response);
-            Assert.True(response.Sucess);
+            Assert.True(response.Success);
             Assert.AreEqual(response.Data.Id, fakeGuest.Id);
             Assert.AreEqual(response.Data.Name, fakeGuest.Name);
         }
@@ -108,7 +110,7 @@ namespace ApplicationTest
             var response = await guestManager.CreateGuest(request);
 
             Assert.IsNotNull(response);
-            Assert.True(response.Sucess);
+            Assert.True(response.Success);
             Assert.AreEqual(response.Data.Id, expectedId);
             Assert.AreEqual(response.Data.Name, guestDto.Name);
         }
@@ -147,7 +149,7 @@ namespace ApplicationTest
             var response = await guestManager.CreateGuest(request);
 
             Assert.IsNotNull(response);
-            Assert.False(response.Sucess);
+            Assert.False(response.Success);
             Assert.AreEqual(response.ErrorCode, ErrorCodes.INVALID_PERSON_ID);
             Assert.AreEqual(response.Message, "The ID passed is not valid");
         }
@@ -189,7 +191,7 @@ namespace ApplicationTest
             var response = await guestManager.CreateGuest(request);
 
             Assert.IsNotNull(response);
-            Assert.False(response.Sucess);
+            Assert.False(response.Success);
             Assert.AreEqual(response.ErrorCode, ErrorCodes.MISSING_REQUIRED_INFORMATION);
             Assert.AreEqual(response.Message, "Missing required information passed");
         }
@@ -224,7 +226,7 @@ namespace ApplicationTest
             var response = await guestManager.CreateGuest(request);
 
             Assert.IsNotNull(response);
-            Assert.False(response.Sucess);
+            Assert.False(response.Success);
             Assert.AreEqual(response.ErrorCode, ErrorCodes.INVALID_EMAIL);
             Assert.AreEqual(response.Message, "The given email is not valid");
         }
